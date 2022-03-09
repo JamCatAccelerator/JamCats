@@ -41,9 +41,8 @@ function MainContainer() {
     console.log('SHOULD BE TRUE -> ', isAuthenticated)
     return(
     <div>
-        <div><Navbar isAuthenticated={isAuthenticated}/></div>
-        <HomeContainer userObj = {userObj}
-        />
+        <Navbar isAuthenticated={isAuthenticated}/>
+        <HomeContainer userObj = {userObj}/>
     </div>
     );
   }

@@ -6,6 +6,7 @@
   */}
 import React, { useState } from 'react'
 import JamSessionContainer from './JamSessionContainer'
+import ActiveJamSessionContainer from './ActiveJamSessionContainer'
   
 // import Queue from '../components/Queue'
 // import SearchBar from '../components/SearchBar'
@@ -13,27 +14,40 @@ import JamSessionContainer from './JamSessionContainer'
 // activateJamSession
 
 function HomeContainer(props) {
+  let [activeJamSession, setActiveJamSession] = useState(false);
+  let [currentJamSession, setCurrentJamSession] = useState('');
   //if (noActiveJamSession)
-  return (
-    <div>
-      <div className='card-dashboard'>
-        <header className='card-header'>
-          <div className='card-header-title is-6'>
-            DASHBOARD
-          </div>
-        </header>
-        <JamSessionContainer
-          // userJamSessions={props.userJamSessions}
-          userObj = {props.userObj}
-          // setActiveJamSession={setActiveJamSession}
-        />
+  
+  const activateJamSession = (jamSessionID) =>{
+    setCurrentJamSession(jamSessionID);
+    setActiveJamSession(true);
+  }
+  const deactivateJamSession = () =>{
+    setCurrentJamSession('');
+    setActiveJamSession(false);
+  }
+  
+  if(!activeJamSession){
+    return(
+      <div>
+        <div className='card-dashboard'>
+          <header className='card-header'>
+            <div className='card-header-title is-6'>
+              DASHBOARD
+            </div>
+          </header>
+          <JamSessionContainer userObj = {props.userObj} activateJamSession = {activateJamSession} />
+        </div>
       </div>
-    </div>
-  )
-  //else if (activeJamSession)
-  //return(
-    //<ActiveJamSession/>
-  //)
+    )
+  }
+  else {
+    return (
+      <div>
+        <ActiveJamSessionContainer currentJamSession = {currentJamSession} deactivateJamSession = {deactivateJamSession}/>
+      </div>
+    )
+ }
 }
 
 export default HomeContainer

@@ -5,12 +5,12 @@ function JamSessionContainer(props) {
 
 // const jSessions = [];
 // for (let i = 0; i < props.userJamSessions; i++){
-//     jSessions.push(<JamSession id={i}/>)
+//     jSessions.push(<JamSession id={i} activateJamSession = {activateJamSession}/>)
 // }
 return (
     <div>
         {/* {jSessions}; */}
-    <JamSession userObj={props.userObj}/>
+        <JamSession userObj={props.userObj} activateJamSession = {props.activateJamSession}/>
     </div>
 )
 }
