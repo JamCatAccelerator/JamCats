@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // {extended: true} stops ur
 app.use(cookieParser());
 
 // serve all the static files within the client folder, images
-app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, '../build')));
 // in production mode, need to serve bundle file in build folder? 
 
 
@@ -27,16 +27,14 @@ app.use(express.static(path.join(__dirname, '../client')));
 
 // serve the index.html file for the homepage
 app.get('/', (req, res) => {
-  res.status(200).send(path.resolve(__dirname, '../client/index.html'));
+  console.log('8080');
+  console.log(res);
+  return res.status(200).send(path.resolve(__dirname, '../client/index.html'));
 });
 
 
-
-// login with spotify
-const client_id = '205cd69007284821ada5a5f0cad50e05';
-
-
 // define route handlers
+
 app.use('/signup', signUpRouter);
 app.use('/login', loginRouter);
 app.use('/jamSession', jamSessionRouter);

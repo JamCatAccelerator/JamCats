@@ -10,6 +10,10 @@ const loginRouter = express.Router();
 
 // get request to serve the login page (login.html)
 loginRouter.get('/', (req, res) => {
+  console.log('8080/login');
+  console.log(res);
+  res.locals.access_token = res.locals.access_token;
+  res.locals.refresh_token = res.locals.refresh_token;
   return res.status(200).sendFile(path.resolve(__dirname, '../../client/login.html'));
 })
 
@@ -18,8 +22,6 @@ loginRouter.post('/', authController.verifyUser, sessionController.startSession,
   res.redirect('/dashboard'); // dashboard or whatever we call the homepage
 })
 
-
-const client_id = '205cd69007284821ada5a5f0cad50e05';
 const redirect_uri = 'http://localhost:8080/login/callback';
 const stateKey = 'spotify_auth_state'
 
@@ -32,7 +34,7 @@ loginRouter.get('/oauth', function(req, res) {
     "https://accounts.spotify.com/authorize?" +
       querystring.stringify({
         response_type: "code",
-        client_id: client_id,
+        client_id: process.env.CLIENT_ID,
         scope: scope,
         redirect_uri: redirect_uri,
         state: randomString,
@@ -42,7 +44,7 @@ loginRouter.get('/oauth', function(req, res) {
 // once request is processed, user will see authorization dialog asking to authorize access within the scope that is specified
 // once user accepts or denies access, user is redirected to the specified redirect_uri
 
-loginRouter.get('/callback', async function (req, res) {
+loginRouter.get('/callback', async function (req, res,) {
   console.log('hello from callback!')
   // callback contains two query params: code = an auth code that can be exchanged for an Access Token, state = value of state param supplied in request
   const code = req.query.code || null;
@@ -50,14 +52,15 @@ loginRouter.get('/callback', async function (req, res) {
   const storedState = req.cookies ? req.cookies[stateKey] : null;
 
   if (state === null || state !== storedState) {
+    console.log('HEREREER');
     res.redirect('/login' +
       querystring.stringify({
         error: 'state_mismatch'
       }));
   } else {
-    res.clearCookie(stateKey)
+    res.clearCookie(stateKey);
     const authOptions = {
-      method: "POST",
+      method: 'POST',
       body: new URLSearchParams({
         grant_type: "authorization_code",
         code: code,
@@ -66,7 +69,7 @@ loginRouter.get('/callback', async function (req, res) {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         Authorization:
-          "Basic " + btoa(client_id + ":" + process.env.CLIENT_SECRET),
+          "Basic " + btoa(process.env.CLIENT_ID + ":" + process.env.CLIENT_SECRET),
       },
       json: true,
     };
@@ -77,19 +80,31 @@ loginRouter.get('/callback', async function (req, res) {
     );
 
     const data = await response.json();
+    console.log('DATA HERE: ')
+    console.log(data)
     const access_token = data.access_token;
     const refresh_token = data.refresh_token;
     res.cookie('spotify_access_token', access_token, {secure: true, httpOnly: true})
     res.cookie('spotify_refresh_token', refresh_token, {secure: true, httpOnly: true})
+    res.locals.access_token = access_token;
+    res.locals.refresh_token = refresh_token;
     res.redirect('/#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
           }));
+    // res.status(301).redirect('http://localhost:8080/login/auth');
     // access tokens are deliberately set to expire after a short time, after which new tokens may be granted by supplying the refresh token obtained from the response in the auth code exchange above
     // now that the user has the access token, user can make requests to Spotify API
   }
 });
+loginRouter.get('/auth', function (req, res,) {
+  console.log('TTTTTTTTTT')
+  console.log(res.locals.access_token);
+  console.log(res.locals.refresh_token);
+  return res.status(200).send(path.resolve(__dirname, '../../client/index.html'))
+});
+
 
 loginRouter.get('/refresh_token', async function(req, res) {
 
@@ -100,7 +115,7 @@ loginRouter.get('/refresh_token', async function(req, res) {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization:
-        "Basic " + btoa(client_id + ":" + process.env.CLIENT_SECRET),
+        "Basic " + btoa(process.env.CLIENT_ID + ":" + process.env.CLIENT_SECRET),
     },
     body: new URLSearchParams({
       grant_type: "refresh_token",

@@ -1,1 +1,11 @@
 # JamCats
+{ spotifyId: 'tgray134', jamSessions: [], _id: new ObjectId("62280bfb79eec3c42393839b")
+
+
+
+#
+access_token=
+BQAh6i74bQ4PhdM5FvoExBRP7trZQO7awbEnJVjNSkNxjHhf1eDvhbqACDTxWh6pDIgh2EEvS_sh71lc0iDbSJvzEr8gBj_IGhUh_QWhr3jjBOaQhPVGVYZW7D2levik7bpcMWJ7BzEw8BKsfqxnxQqX9kSkGp75PHNHeQrSCl6Y41Q2X1THn773DlEUP04YxfMoWMT_Y-x85gGlMLl28AoV9JvLZ0NPyunMsmQ42txBbe3GVCI&
+
+refresh_token=
+AQBdFijwni2XjxZDwmbD2vflyu-3KKQ7w3c7jc5-Ax4LWa1vLOvmNY6iLnD5_6r1YPSzYGa3p5DQsARSLdV8COq8uwoyCkzTiJ7Chk11eIKMmPE5IgYRNUnbSMOUKUaYiK4

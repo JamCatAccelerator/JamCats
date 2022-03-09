@@ -1,9 +1,10 @@
 import * as types from '../constants/types';
 
 const initialState = {
-  songsList: [],
-  newSong: '',
-  jamSessionsList: {}
+  newSong : '',
+  userID: '',
+  pastJamSessions: [],
+  activeJamSession: [],
 }
 
 const jamSessionsReducer = (state = initialState, action) => {
