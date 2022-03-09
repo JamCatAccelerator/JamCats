@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 // app.use('/signup', signUpRouter);
 app.use('/login', loginRouter);
 app.use('/user', userRouter);
-app.use('/jamSession', jamSessionRouter);
+app.use('/jam-session', jamSessionRouter);
 app.use('/search', searchRouter);
 
 

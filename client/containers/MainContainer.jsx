@@ -24,7 +24,7 @@ const  MainContainer = (props) => {
       })
       .catch((error) => {console.error('Error:', error);})
   }, []);
-  ""
+  
   if (!isAuthenticated){
     return (
       <div>
