@@ -15,17 +15,16 @@ const  MainContainer = (props) => {
   let [userInfo, setUserInfo] = useState({});
 
   useEffect(()=>{
-    fetch('http://localhost:8080/getUserID')
-    .catch((error) => {console.error('Error:', error);});
-    fetch('http://localhost:8080/getUserObj')
+    fetch('http://localhost:8080/user/info')
       .then(res => res.json())
       .then(data => {
+        console.log(data);
         setAuthenticationStatus(true);
         setUserInfo = data;
       })
       .catch((error) => {console.error('Error:', error);})
   }, []);
-  
+  ""
   if (!isAuthenticated){
     return (
       <div>
