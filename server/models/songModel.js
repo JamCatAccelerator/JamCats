@@ -1,3 +1,5 @@
+//do not use; no longer relevant becuase song information will be stored in Redux or on Spotify playlist
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
