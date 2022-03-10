@@ -33,7 +33,27 @@ function SearchBar() {
 
 export default SearchBar
 
-
+//loop through item array
+//
+//ele.name
+//ele.artists[0].name
+//let url = 
+// 'https://api.spotify.com/v1/search?' 
+// + 'q=' 
+// + ${encodeURIComponent(songname)}
+// + '&type=track&market=ES&limit=10&offset=0'
+// fetch(url, {
+//     headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/json',
+//         'Authorization': 'Bearer ' + process.env.ACCESS_TOKEN
+//     }
+// });
+//results.map(ele =>{
+//   name: ele.name,
+//   artist: ele.artists[0].name,
+//   albumCover: ele.images.filter(ele => ele.height === 64)[0].url
+// })
 // const [searchString, setSearchString] = useState('');
 //   const [searchList, setSearchList] = useState([{song: 'Hey Ya', artist: 'OutKast'}, {song: 'Dynamite', artist: 'BTS'}])
 //   const [isSearching, setIsSearching] = useState(false)
