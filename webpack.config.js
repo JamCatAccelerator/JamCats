@@ -50,16 +50,21 @@ module.exports = {
   },
   devServer: {
     static: {
-        directory: path.resolve(__dirname, 'build'),
-        publicPath: '/build'
-      },
-    //possibly add in 8080 target
-    proxy: {
-        '/': {
-            target: 'http://localhost:3000/',
-            secure: false,
-        },
+      directory: path.resolve(__dirname, 'build'),
+      publicPath: '/build'
     },
-    hot: true,
-  },
+    port: 8080,
+    proxy: {
+      '/**': {
+          target: 'http://localhost:3000',
+          secure: false,
+          changeOrigin: true,
+          headers: {
+            Connection: 'keep-alive'
+          }
+      },
+    },
+    open: true,
+    hot: true
+  }
 };
