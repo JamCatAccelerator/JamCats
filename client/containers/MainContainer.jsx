@@ -19,9 +19,10 @@ function MainContainer() {
     fetch('http://localhost:8080/user/info')
     .then(res => res.json())
     .then(data => {
-      console.log(data);
-      // setAuthenticationStatus(true);
-      // setUserObj(data);
+      console.log('DATA:' , data);
+      if(data.authenticated !== false)
+      {setAuthenticationStatus(true);
+      setUserObj(data);}
     })
     .catch((error) => {console.error('Error useEffect:', error);})
   },[])
