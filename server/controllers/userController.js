@@ -3,7 +3,6 @@ const User = require('../models/userModel.js');
 const JamSession = require('../models/jamSessionModel.js');
 const querystring = require('query-string');
 const fetch = require('node-fetch');
-const { user } = require('pg/lib/defaults');
 
 const userController = {};
 
@@ -43,44 +42,52 @@ userController.checkUser = async (req, res, next) => {
   const { display_name, email, href, id, images } = spotifyProfile;
   res.locals.spotifyProfile = { display_name, email, href, images };
   // use findOne to look and see if user exists
-  User.findOne({ spotifyId: id }, (err, user) => {
-    if (err) {
-      return next({
-        log: 'Error in userController.checkUser',
-        status: 400,
-        message: {
-          err: 'An error occurred while inserting a user into the database',
-        },
-      });
-    }
-    //if null (or doesn't exist) run create user method and return info to client
-    if (!user) {
-      User.create({ spotifyId: id }, (err, user) => {
-        if (err) {
-          return next({
-            log: 'Error in userController.checkUser',
-            status: 400,
-            message: {
-              err: 'An error occurred while inserting a user into the database',
-            },
-          });
-        }
+  User.findOneAndUpdate(
+    { spotifyId: id },
+    { hostToken: req.cookies.spotify_access_token },
+    { new: true },
+    (err, user) => {
+      if (err) {
+        return next({
+          log: 'Error in userController.checkUser',
+          status: 400,
+          message: {
+            err: 'An error occurred while inserting a user into the database',
+          },
+        });
+      }
+      //if null (or doesn't exist) run create user method and return info to client
+      if (!user) {
+        User.create(
+          { spotifyId: id, hostToken: req.cookies.spotify_access_token },
+          (err, user) => {
+            if (err) {
+              return next({
+                log: 'Error in userController.checkUser',
+                status: 400,
+                message: {
+                  err: 'An error occurred while inserting a user into the database',
+                },
+              });
+            }
+            res.locals.dbInfo = user;
+            return next();
+          }
+        );
+      }
+      // otherwise, store user info and move on to next middleware
+      else {
         res.locals.dbInfo = user;
         return next();
-      });
+      }
     }
-    // otherwise, store user info and move on to next middleware
-    else {
-      res.locals.dbInfo = user;
-      return next();
-    }
-  });
+  );
 };
 
 // get jam sessions from jamSession colleciton utilizing user's ID
 userController.getJamSessions = (req, res, next) => {
   // find jam sessions using the user's document id, which will be stored in each jam session
-  JamSession.find({ hostId: res.locals.dbInfo._id }, (err, sessions) => {
+  JamSession.find({ hostId: res.locals.dbInfo.spotifyId }, (err, sessions) => {
     if (err) {
       return next({
         log: 'Error in userController.getJamSessions',

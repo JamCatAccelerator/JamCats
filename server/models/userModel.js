@@ -17,6 +17,7 @@ mongoose.set('debug', true);
 // stores spotifyId and references to user's jam sessions in separate collection
 const userSchema = new Schema({
   spotifyId: { type: String, required: true, unique: true },
+  hostToken: { type: String, required: true },
   jamSessions: {
     type: [{ type: Schema.Types.ObjectId, ref: 'JamSession' }],
     default: [],
