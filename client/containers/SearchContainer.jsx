@@ -1,30 +1,59 @@
 import React, {useState} from 'react'
-import SearchResult from './SearchResult';
+import SearchResultContainer from './SearchResultContainer'
 
 
 function SearchBar() {
   const [searchString, setSearchString] = useState('');
   const [searchResults, setSearchResults] = useState([]); 
 
-  const search = async (formValue) => {
-    // fetch('api', formValue)
-    // .then(res => {
-    //   setSearchResults(res)
-    // })
+  const search = (formValue) => {
     console.log(formValue);
+    let url = 
+      'https://api.spotify.com/v1/search?q='
+      + `${encodeURIComponent(formValue)}`
+      + '&type=track&market=ES&limit=10&offset=0';
+      fetch(url, {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + 'BQAurn-EDdwJcvS4oRDcX9aOr-xoGRutQBUq__RPMWtR7LMFoncPd33m2UHqMljaSQTWprdoDHgwc0GxE-7rxHIfaPd-YzRNzW400R1lse-cmQRbTgIVdvTpF79e0s-zqQkv4HQsHEkxLFuX9RbVRO82Cw'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Search Results: ', data);
+        return data.tracks.items.map(ele => 
+          ({
+            name: ele.name,
+            artist: ele.artists[0].name,
+            albumCover: ele.album.images.filter(ele => ele.height == 64)[0].url
+          }));
+      })
+      .then(filtered => {
+        console.log(filtered);
+        setSearchResults(filtered);
+      })
+      .catch((error) => {console.error('Error SEARCH:', error);})
   }
-
-  
+ 
   return(
     <div>
-      <form>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        search(document.getElementById('search-song').value);
+      }}>
         <label>Search Song</label>
         <input 
           id="search-song"
           placeholder="enter song"
-          onChange={(e) => search(e.target.value)}
         />
+        <button id="search" type="submit" className="button is-primary">Search For Song</button> 
       </form>
+      <div>
+        <SearchResultContainer
+          results={searchResults}
+        />
+      </div>
     </div>
   )
 }
@@ -46,7 +75,7 @@ export default SearchBar
 //     headers: {
 //         'Accept': 'application/json',
 //         'Content-Type': 'application/json',
-//         'Authorization': 'Bearer ' + process.env.ACCESS_TOKEN
+//         'Authorization': 'Bearer ' + 'BQBb_3CWpKFFRw-zgTdZQ26dgedSKOetYpwH9h6tCPeM6UY8duocRwty_QJfVBoEa_l6OeDSm9brkb2-cXSFnp4F5wb1JEnK4SarWQtq5HdCli2bGjaiCUpubOaUtBFwntXD2RHHK5FMCBfDFLw3zcmByg'
 //     }
 // });
 //results.map(ele =>{

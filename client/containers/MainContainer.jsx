@@ -14,17 +14,17 @@ function MainContainer() {
   }]); //{ spotifyProfile, dbInfo, authenticated, jamSessions, playlists }
 
   useEffect ( () => {
-    // let authStatus = confirm('would you like to log in')
-    // setAuthenticationStatus(authStatus);
-    fetch('http://localhost:8080/user/info')
-    .then(res => res.json())
-    .then(data => {
-      console.log('DATA:' , data);
-      if(data.authenticated !== false)
-      {setAuthenticationStatus(true);
-      setUserObj(data);}
-    })
-    .catch((error) => {console.error('Error useEffect:', error);})
+    let authStatus = confirm('would you like to log in')
+    setAuthenticationStatus(authStatus);
+    // fetch('http://localhost:8080/user/info')
+    // .then(res => res.json())
+    // .then(data => {
+    //   console.log('DATA:' , data);
+    //   if(data.authenticated !== false)
+    //   {setAuthenticationStatus(true);
+    //   setUserObj(data);}
+    // })
+    // .catch((error) => {console.error('Error useEffect:', error);})
   },[])
   
 

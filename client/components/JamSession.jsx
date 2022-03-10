@@ -6,7 +6,7 @@ return (
     <div>
         JAM Session {props.id}
         {JSON.stringify(props.userObj)}
-        <button className="button is-light" onClick={()=>{props.activateJamSession('Jam Id')}}>ACTIVATE</button>
+        <button className="button is-primary" onClick={()=>{props.activateJamSession('Jam Id')}}>ACTIVATE</button>
     </div>
 )
 }

@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
-import SearchBar from '../components/SearchBar.jsx';
-import SearchResult from '../components/SearchResult.jsx';
-
+import SearchContainer from './SearchContainer.jsx';
 
 const ActiveJamSessionContainer = (props) => {
   return (
     <div>
         <h1>{props.currentJamSession}</h1>
-        <SearchBar/>
+        <SearchContainer/>
         <button className="button is-light" onClick={()=>{props.deactivateJamSession()}}>DEACTIVATE</button>
     </div>  
   )
