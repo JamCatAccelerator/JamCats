@@ -5,48 +5,61 @@ import HomeContainer from './HomeContainer.jsx';
 
 function MainContainer() {
   let [isAuthenticated, setAuthenticationStatus] = useState(false);
-  let [userObj, setUserObj] = useState([
+  let [userObj, setUserObj] = useState(
     {
-      spotifyProfile: 'spotifyProfile',
-      dbInfo: 'dbInfo',
-      authenticated: 'authenticated',
-      jamSessions: 'jamSessions',
-      playlists: 'playlists',
+      authenticated:false,
+      spotifyProfile:{},
+      dbInfo:{},
+      jamSessions:[],
+      playlists:[],
+    }); 
+  
+ /* userObj= {
+    "authenticated":true,
+    "spotifyProfile":{
+      "display_name":"David Sharfi",
+      "email":"spotify@djs.gg",
+      "href":"https://api.spotify.com/v1/users/dsharfi",
+      "images":[{"height":null,"url":"https://scontent-iad3-2.xx.fbcdn.net/v/t1.18169-1/20992652_10155665933208739_6263703377664512260_n.jpg?stp=dst-jpg_p320x320&_nc_cat=107&ccb=1-5&_nc_sid=0c64ff&_nc_ohc=KTPtT7PhsooAX_f0xuU&_nc_ht=scontent-iad3-2.xx&edm=AP4hL3IEAAAA&oh=00_AT_CGEtSkyCVGO_fwF2seecW-bjGqbyoruW-dObE4W7zrw&oe=625155AE","width":null}]
     },
-  ]); //{ spotifyProfile, dbInfo, authenticated, jamSessions, playlists }
-
+    "dbInfo":{
+      "_id":"622a2ead3f7ddccf31b576cf",
+      "spotifyId":"dsharfi",
+      "jamSessions":[],
+      "__v":0
+    },
+    "jamSessions":[],
+    "playlists":[]
+  }*/
+  const createJamSession =(jamSession) => {
+    jamSessions = [...userObj.jamSessions];
+    jamSessions.push(jamSession);
+    //back end call
+  }
+  
   useEffect ( () => {
-    // let authStatus = confirm('would you like to log in')
-    // setAuthenticationStatus(authStatus);
     fetch('http://localhost:8080/user/info')
     .then(res => res.json())
     .then(data => {
-      console.log('DATA:' , data);
-      if(data.authenticated !== false)
-      {setAuthenticationStatus(true);
-      setUserObj(data);}
+      setAuthenticationStatus(data.authenticated);
+      setUserObj(data);
     })
-    .catch((error) => {console.error('Error useEffect:', error);})
+    .catch((error) => {console.error('Error:', error);})
   },[])
   
-
   if (!isAuthenticated) {
-    console.log('SHOULD BE FALSE-> ', isAuthenticated);
     return (
-      <div>
-        <div>
+      <div id="login-page">
           <Navbar isAuthenticated={isAuthenticated} />
           <LoginContainer />
-        </div>
       </div>
     )
   }else{
-    console.log('SHOULD BE TRUE -> ', isAuthenticated)
     return(
-    <div>
+      <div id="home-page">
         <Navbar isAuthenticated={isAuthenticated}/>
-        <HomeContainer userObj = {userObj}/>
-    </div>
+        <HomeContainer userObj = {userObj} createJamSession={createJamSession}/>
+      </div>
     );
   }
 }

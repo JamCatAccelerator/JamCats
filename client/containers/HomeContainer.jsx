@@ -1,49 +1,62 @@
-{/* 
-  button to create a new jam session
-  button to logout
-  container to hold all of the jam sessions
-  cards to hold informatoin about each jam session
-  */}
 import React, { useState } from 'react'
 import JamSessionContainer from './JamSessionContainer'
 import ActiveJamSessionContainer from './ActiveJamSessionContainer'
-  
-// import Queue from '../components/Queue'
-// import SearchBar from '../components/SearchBar'
-// let [activeJamSession, setActiveJamSession] = useState(false);
-// activateJamSession
+import CreateJamSession from '../components/CreateJamSession'
 
+ /* userObj= {
+    "authenticated":true,
+    "spotifyProfile":{
+      "display_name":"David Sharfi",
+      "email":"spotify@djs.gg",
+      "href":"https://api.spotify.com/v1/users/dsharfi",
+      "images":[{"height":null,"url":"https://scontent-iad3-2.xx.fbcdn.net/v/t1.18169-1/20992652_10155665933208739_6263703377664512260_n.jpg?stp=dst-jpg_p320x320&_nc_cat=107&ccb=1-5&_nc_sid=0c64ff&_nc_ohc=KTPtT7PhsooAX_f0xuU&_nc_ht=scontent-iad3-2.xx&edm=AP4hL3IEAAAA&oh=00_AT_CGEtSkyCVGO_fwF2seecW-bjGqbyoruW-dObE4W7zrw&oe=625155AE","width":null}]
+    },
+    "dbInfo":{
+      "_id":"622a2ead3f7ddccf31b576cf",
+      "spotifyId":"dsharfi",
+      "jamSessions":[],
+      "__v":0
+    },
+    "jamSessions":[],
+    "playlists":[]
+  }*/
+  
 function HomeContainer(props) {
-  let [activeJamSession, setActiveJamSession] = useState(false);
+  let [hasActiveJamSession, setActiveJamSessionStatus] = useState(false);
   let [currentJamSession, setCurrentJamSession] = useState('');
   //if (noActiveJamSession)
   
   const activateJamSession = (jamSessionID) =>{
+    setActiveJamSessionStatus(true);
     setCurrentJamSession(jamSessionID);
-    setActiveJamSession(true);
   }
   const deactivateJamSession = () =>{
+    setActiveJamSessionStatus(false);
     setCurrentJamSession('');
-    setActiveJamSession(false);
   }
-  
-  if(!activeJamSession){
+
+
+  if(!hasActiveJamSession){
     return(
-      <div>
-        <div className='card-dashboard'>
-          <header className='card-header'>
-            <div className='card-header-title is-6'>
-              DASHBOARD
-            </div>
-          </header>
-          <JamSessionContainer userObj = {props.userObj} activateJamSession = {activateJamSession} />
-        </div>
+      <div id="jam-session-container" className='card-dashboard'>
+        <header className='card-header'>
+          <div className='card-header-title is-6'>
+            JAM SESSION DASHBOARD          
+          </div>
+        </header>
+        <CreateJamSession jamSessions={props.userObj.jamSessions}/>
+        <JamSessionContainer jamSessions = {props.userObj.jamSessions} activateJamSession = {activateJamSession} />
       </div>
     )
   }
   else {
     return (
-      <div>
+      <div id="active-jam-session" className='card-dashboard'>
+        <header className='card-header'>
+          <div className='card-header-title is-6'>
+            CURRENT JAM SESSSION
+          </div>
+        </header>
         <ActiveJamSessionContainer currentJamSession = {currentJamSession} deactivateJamSession = {deactivateJamSession}/>
       </div>
     )
@@ -51,43 +64,3 @@ function HomeContainer(props) {
 }
 
 export default HomeContainer
-
-
-{/* <div className='card'>
-          <header className='card-header'>
-          <div className='card-header-title is-6'>
-            Jam Session 1
-            </div>
-          </header>
-          <div className='card-content'>
-            <p className='title'>Current Song</p>
-            <p className='subtitle'>Current Artist</p>
-            <div className={isActive ? "dropdown is-active" : "dropdown"}>
-              <div className="dropdown-trigger">
-                <button onClick={() => {setIsActive(!isActive)}} className="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                  <span>Dropdown button</span>
-                  <span className="icon is-small">
-                    <i className="fas fa-angle-down" aria-hidden="true"></i>
-                  </span>
-                </button>
-              </div>
-              <div className="dropdown-menu" id="dropdown-menu" role="menu">
-                <div className="dropdown-content">
-                  <a href="#" className="dropdown-item">
-                    Add Songs
-                  </a>
-                  <a className="dropdown-item">
-                    Change Order
-                  </a>
-                  <hr className="dropdown-divider"></hr>
-                  <a href="#" className="dropdown-item is-active">
-                    Delete Jam Session
-                  </a>
-                </div>
-              </div>
-            </div>
-            <SearchBar/>
-
-            <Queue/>
-          </div>
-        </div> */}

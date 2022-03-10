@@ -1,7 +1,7 @@
 import React from 'react'
 function LoginContainer() {
     return(
-    <div className="LoginContainer">
+    <div id="login-container">
       LOGIN CONTAINER
     </div>
     );

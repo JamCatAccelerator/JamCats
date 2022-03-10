@@ -8,7 +8,7 @@ function JamSessionContainer(props) {
 //     jSessions.push(<JamSession id={i} activateJamSession = {activateJamSession}/>)
 // }
 return (
-    <div>
+    <div id="jam-sessions">
         {/* {jSessions}; */}
         <JamSession userObj={props.userObj} activateJamSession = {props.activateJamSession}/>
     </div>
