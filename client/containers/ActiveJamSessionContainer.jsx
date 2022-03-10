@@ -3,7 +3,7 @@ import SearchContainer from './SearchContainer.jsx';
 
 const ActiveJamSessionContainer = (props) => {
   return (
-    <div>
+    <div id="active-jam-session">
         <h1>{props.currentJamSession}</h1>
         <SearchContainer/>
         <button className="button is-light" onClick={()=>{props.deactivateJamSession()}}>DEACTIVATE</button>
