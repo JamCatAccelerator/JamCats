@@ -15,20 +15,20 @@ function MainContainer() {
     },
   ]); //{ spotifyProfile, dbInfo, authenticated, jamSessions, playlists }
 
-  useEffect(() => {
+  useEffect ( () => {
     // let authStatus = confirm('would you like to log in')
     // setAuthenticationStatus(authStatus);
     fetch('http://localhost:8080/user/info')
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        // setAuthenticationStatus(true);
-        // setUserObj(data);
-      })
-      .catch((error) => {
-        console.error('Error useEffect:', error);
-      });
-  }, []);
+    .then(res => res.json())
+    .then(data => {
+      console.log('DATA:' , data);
+      if(data.authenticated !== false)
+      {setAuthenticationStatus(true);
+      setUserObj(data);}
+    })
+    .catch((error) => {console.error('Error useEffect:', error);})
+  },[])
+  
 
   if (!isAuthenticated) {
     console.log('SHOULD BE FALSE-> ', isAuthenticated);
@@ -39,16 +39,14 @@ function MainContainer() {
           <LoginContainer />
         </div>
       </div>
-    );
-  } else {
-    console.log('SHOULD BE TRUE -> ', isAuthenticated);
-    return (
-      <div>
-        <div>
-          <Navbar isAuthenticated={isAuthenticated} />
-        </div>
-        <HomeContainer userObj={userObj} />
-      </div>
+    )
+  }else{
+    console.log('SHOULD BE TRUE -> ', isAuthenticated)
+    return(
+    <div>
+        <Navbar isAuthenticated={isAuthenticated}/>
+        <HomeContainer userObj = {userObj}/>
+    </div>
     );
   }
 }
