@@ -87,7 +87,7 @@ userController.checkUser = async (req, res, next) => {
 // get jam sessions from jamSession colleciton utilizing user's ID
 userController.getJamSessions = (req, res, next) => {
   // find jam sessions using the user's document id, which will be stored in each jam session
-  JamSession.find({ hostId: res.locals.dbInfo._id }, (err, sessions) => {
+  JamSession.find({ hostId: res.locals.dbInfo.spotifyId }, (err, sessions) => {
     if (err) {
       return next({
         log: 'Error in userController.getJamSessions',
