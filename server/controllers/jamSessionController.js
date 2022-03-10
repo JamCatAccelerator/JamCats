@@ -44,7 +44,11 @@ jamSessionController.createJamSession = async (req, res, next) => {
   // req to start jam session: user with user._id makes post req - set hostId to user._id
   // create a new document in the jam sessions collection in database
   JamSession.create(
-    { hostId: hostId, playlistId: playlistId },
+    {
+      hostId: hostId,
+      hostToken: req.cookies.spotify_access_token, // allows guest users to add to playlist
+      playlistId: playlistId,
+    },
     (err, jamSession) => {
       if (err) {
         return next({
@@ -63,7 +67,6 @@ jamSessionController.createJamSession = async (req, res, next) => {
 
 jamSessionController.addSong = async (req, res, next) => {
   const { playlist_id, uri } = req.body;
-  // POST https://api.spotify.com/v1/playlists/{playlist_id}/tracks
   const authOptions = {
     method: 'POST',
     headers: {
@@ -82,7 +85,48 @@ jamSessionController.addSong = async (req, res, next) => {
   res.locals.isAdded = true;
   return next();
 };
-// check guest? yes -> next()
-// check host? yes -> oAuth
+
+jamSessionController.joinSession = async (req, res, next) => {
+  const { playlistId } = req.params;
+  // get jam session using playlist ID from query
+  const jamSession = await JamSession.findOne({ playlistId: playlistId }).catch(
+    (err) => {
+      return next({
+        log: 'Error in jamSessionController.joinSession',
+        status: 400,
+        message: { err: 'An error occurred while trying to join a session' },
+      });
+    }
+  );
+  if (!jamSession.isActivated) {
+    res.locals.isActivated = false;
+    return next();
+  }
+  // get user info using jam session info
+  const user = await User.findOne({
+    spotifyId: jamSession.hostId,
+  }).catch((err) => {
+    return next({
+      log: 'Error in jamSessionController.joinSession',
+      status: 400,
+      message: { err: 'An error occurred while trying to join a session' },
+    });
+  });
+  // get playlist info from spotify
+  const { hostToken } = user;
+  const authOptions = {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + hostToken,
+    },
+  };
+  const playlist = await fetch(
+    `https://api.spotify.com/v1/playlists/${playlistId}`,
+    authOptions
+  );
+  res.locals = { playlist, jamSession, isActivated: true };
+  return next();
+};
 
 module.exports = jamSessionController;

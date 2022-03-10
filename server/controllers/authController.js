@@ -55,7 +55,9 @@ authController.getToken = async (req, res, next) => {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization:
           'Basic ' +
-          btoa(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET),
+          new Buffer(
+            process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET
+          ).toString('base64'),
       },
       json: true,
     };
@@ -80,82 +82,45 @@ authController.getToken = async (req, res, next) => {
   }
 };
 
-authController.verifyUser = (req, res, next) => {
-  const { username, password } = req.body;
-  if (!username || !password)
-    return next({
-      log: 'Missing username or password in authController.verifyUser',
-    });
-  User.findOne({ username: username }, (err, user) => {
-    if (err) {
-      // database error
-      return next({
-        log: 'Error in authController.verifyUser: ' + JSON.stringify(err),
-      });
-    } else if (!user) {
-      // no user was found
-      res.redirect('/signup');
-    } else {
-      // user was found, compare the password to the hashed one
-      bcrypt
-        .compare(password, user.password)
-        .then((result) => {
-          if (!result) {
-            // password did not match
-            res.redirect('/signup');
-          } else {
-            // password did match, save user for following middlewars
-            res.locals.user = user;
-            return next();
-          }
-        })
-        .catch((err) => {
-          // error while bcrypt was running
-          return next({
-            log: 'Error in authController.verifyUser: ' + JSON.stringify(err),
-          });
-        });
-    }
-  });
-};
+authController.getRefreshToken = async (req, res, next) => {
+  const refresh_token = req.cookies.spotify_refresh_token;
+  const authOptions = {
+    method: 'POST',
+    url: 'https://accounts.spotify.com/api/token',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization:
+        'Basic ' +
+        new Buffer(
+          process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET
+        ).toString('base64'),
+    },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      code: refresh_token,
+    }),
+    json: true,
+  };
 
-authController.verifyCookie = (req, res, next) => {
-  const { username, password } = req.body;
-  if (!username || !password)
-    return next({
-      log: 'Missing username or password in authController.verifyUser',
+  const data = await fetch(
+    'https://accounts.spotify.com/api/token',
+    authOptions
+  ).then((data) => data.json());
+
+  if (!data.error && data.status === 200) {
+    const new_access_token = data.access_token;
+    const new_refresh_token = data.refresh_token;
+    //update the accesses tokens inside of the cookies
+    res.cookie('spotify_access_token', new_access_token, {
+      secure: true,
+      httpOnly: true,
     });
-  User.findOne({ username: username }, (err, user) => {
-    if (err) {
-      // database error
-      return next({
-        log: 'Error in authController.verifyUser: ' + JSON.stringify(err),
-      });
-    } else if (!user) {
-      // no user was found
-      res.redirect('/signup');
-    } else {
-      // user was found, compare the password to the hashed one
-      bcrypt
-        .compare(password, user.password)
-        .then((result) => {
-          if (!result) {
-            // password did not match
-            res.redirect('/signup');
-          } else {
-            // password did match, save user for following middlewars
-            res.locals.user = user;
-            return next();
-          }
-        })
-        .catch((err) => {
-          // error while bcrypt was running
-          return next({
-            log: 'Error in authController.verifyUser: ' + JSON.stringify(err),
-          });
-        });
-    }
-  });
+    res.cookie('spotify_refresh_token', new_refresh_token, {
+      secure: true,
+      httpOnly: true,
+    });
+  }
+  return next();
 };
 
 module.exports = authController;
