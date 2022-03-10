@@ -16,7 +16,7 @@ function SearchBar() {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + 'BQAurn-EDdwJcvS4oRDcX9aOr-xoGRutQBUq__RPMWtR7LMFoncPd33m2UHqMljaSQTWprdoDHgwc0GxE-7rxHIfaPd-YzRNzW400R1lse-cmQRbTgIVdvTpF79e0s-zqQkv4HQsHEkxLFuX9RbVRO82Cw'
+            'Authorization': 'Bearer ' + 'BQCYGGE8te8b53fD_q7pRKIKYfpbmYZVXUyRm8HNTy9qvcIa7po7LgXs1E89px126oJLV16X4uLuuPj9SIo_WWhjWMd4wiTr6nbDf510Pv4Q3pokYZn_1-xkIXFoRe524gM5aAF_2G11TA0ttoVjiKEctg'
         }
       })
       .then(res => res.json())

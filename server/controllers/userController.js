@@ -8,7 +8,6 @@ const { user } = require('pg/lib/defaults');
 const userController = {};
 
 userController.validateCookie = (req, res, next) => {
-  console.log('in validateCookie');
   if (!req.cookies.spotify_access_token) {
     return res.status(200).json({ authenticated: false });
   }
@@ -18,7 +17,6 @@ userController.validateCookie = (req, res, next) => {
 
 userController.checkUser = async (req, res, next) => {
   //initiate fetch request with access token to get user info
-  console.log('in checkUser');
   const authOptions = {
     headers: {
       Accept: 'application/json',
@@ -55,7 +53,6 @@ userController.checkUser = async (req, res, next) => {
         },
       });
     }
-
     //if null (or doesn't exist) run create user method and return info to client
     if (!user) {
       User.create({ spotifyId: id }, (err, user) => {
@@ -69,20 +66,20 @@ userController.checkUser = async (req, res, next) => {
           });
         }
         res.locals.dbInfo = user;
-        return res.status(200).json(res.locals);
+        return next();
       });
     }
-
     // otherwise, store user info and move on to next middleware
-    res.locals.dbInfo = user;
-    return next();
+    else {
+      res.locals.dbInfo = user;
+      return next();
+    }
   });
 };
 
 // get jam sessions from jamSession colleciton utilizing user's ID
 userController.getJamSessions = (req, res, next) => {
   // find jam sessions using the user's document id, which will be stored in each jam session
-  console.log('in getJamSessions');
   JamSession.find({ hostId: res.locals.dbInfo._id }, (err, sessions) => {
     if (err) {
       return next({
@@ -100,7 +97,6 @@ userController.getJamSessions = (req, res, next) => {
 
 // use sessions from previous middleware to query spotify for playlist info
 userController.getPlaylists = async (req, res, next) => {
-  console.log('in getPlaylists');
   const authOptions = {
     headers: {
       Accept: 'application/json',
