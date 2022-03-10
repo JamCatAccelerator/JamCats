@@ -7,7 +7,8 @@ const jamSessionController = {};
 jamSessionController.createJamSession = async (req, res, next) => {
   // send spotify user id, playlist name, and playlist visibility (public/private) in request body
   const hostId = req.body.id;
-  if (!hostId) return next({log:'Missing hostId in jamSessionController.createUser'});
+  if (!hostId)
+    return next({ log: 'Missing hostId in jamSessionController.createUser' });
   // create playlist on spotify using request body info
   const authOptions = {
     method: 'POST',
@@ -17,13 +18,16 @@ jamSessionController.createJamSession = async (req, res, next) => {
       Authorization: 'Bearer ' + req.cookies.spotify_access_token,
     },
     body: {
-      "name": req.body.playlistName,
-      "description": "A JamCats Jam Session&#8482;",
-      "public": req.body.isPublic
-    }
+      name: req.body.playlistName,
+      description: 'A JamCats Jam Session&#8482;',
+      public: req.body.isPublic,
+    },
   };
-  const newPlaylist = await fetch('https://api.spotify.com/v1/users/' + req.body.id + '/playlists', authOptions).then(data => data.json());
-  
+  const newPlaylist = await fetch(
+    'https://api.spotify.com/v1/users/' + req.body.id + '/playlists',
+    authOptions
+  ).then((data) => data.json());
+
   // if playlist creation returns error, do not insert into database
   if (newPlaylist.error) {
     if (newPlaylist.error.status === 401) {
@@ -39,21 +43,45 @@ jamSessionController.createJamSession = async (req, res, next) => {
   const playlistId = newPlaylist.id;
   // req to start jam session: user with user._id makes post req - set hostId to user._id
   // create a new document in the jam sessions collection in database
-  JamSession.create({hostId: hostId, playlistId: playlistId}, (err, jamSession) =>{
-    if (err){
-      return next({
-        log: 'Error in jamSessionController.createJamSession',
-        status: 400,
-        message: { err: 'An error occurred :/' },
-      });
+  JamSession.create(
+    { hostId: hostId, playlistId: playlistId },
+    (err, jamSession) => {
+      if (err) {
+        return next({
+          log: 'Error in jamSessionController.createJamSession',
+          status: 400,
+          message: { err: 'An error occurred :/' },
+        });
+      } else {
+        res.locals.jamSession = jamSession;
+        res.locals.playlist = newPlaylist;
+        return next();
+      }
     }
-    else {
-      res.locals.jamSession = jamSession;
-      res.locals.playlist = newPlaylist;
-      return next(); 
-    }
-  }) 
-}
+  );
+};
+
+jamSessionController.addSong = async (req, res, next) => {
+  const { playlist_id, uri } = req.body;
+  // POST https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+  const authOptions = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + req.cookies.spotify_access_token,
+    },
+    body: {
+      uris: [uri],
+    },
+  };
+  const newSong = await fetch(
+    `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+    authOptions
+  );
+  res.locals.isAdded = true;
+  return next();
+};
 // check guest? yes -> next()
 // check host? yes -> oAuth
 

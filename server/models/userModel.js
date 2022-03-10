@@ -14,7 +14,7 @@ mongoose
 
 mongoose.set('debug', true);
 
-// stores spotify_id and references to user's jam sessions in separate collection
+// stores spotifyId and references to user's jam sessions in separate collection
 const userSchema = new Schema({
   spotifyId: { type: String, required: true, unique: true },
   jamSessions: {
