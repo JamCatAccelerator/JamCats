@@ -6,6 +6,8 @@ const jamSessionController = {};
 
 jamSessionController.createJamSession = async (req, res, next) => {
   // send spotify user id, playlist name, and playlist visibility (public/private) in request body
+  console.log('body');
+  console.log(req.body);
   const hostId = req.body.id;
   if (!hostId)
     return next({ log: 'Missing hostId in jamSessionController.createUser' });
@@ -17,11 +19,11 @@ jamSessionController.createJamSession = async (req, res, next) => {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + req.cookies.spotify_access_token,
     },
-    body: {
+    body: JSON.stringify({
       name: req.body.playlistName,
-      description: 'A JamCats Jam Session&#8482;',
+      description: 'A JamCats Jam Session :)',
       public: req.body.isPublic,
-    },
+    }),
   };
   const newPlaylist = await fetch(
     'https://api.spotify.com/v1/users/' + req.body.id + '/playlists',
@@ -46,7 +48,6 @@ jamSessionController.createJamSession = async (req, res, next) => {
   JamSession.create(
     {
       hostId: hostId,
-      hostToken: req.cookies.spotify_access_token, // allows guest users to add to playlist
       playlistId: playlistId,
     },
     (err, jamSession) => {
@@ -74,9 +75,9 @@ jamSessionController.addSong = async (req, res, next) => {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + req.cookies.spotify_access_token,
     },
-    body: {
+    body: JSON.stringify({
       uris: [uri],
-    },
+    }),
   };
   const newSong = await fetch(
     `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,

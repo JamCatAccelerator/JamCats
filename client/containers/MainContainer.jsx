@@ -4,15 +4,84 @@ import LoginContainer from './LoginContainer.jsx';
 import HomeContainer from './HomeContainer.jsx';
 
 function MainContainer() {
-  let [isAuthenticated, setAuthenticationStatus] = useState(false);
-  let [userObj, setUserObj] = useState(
-    {
-      authenticated:false,
-      spotifyProfile:{},
-      dbInfo:{},
-      jamSessions:[],
-      playlists:[],
-    }); 
+  // 5 components of state: authentication status, spotify profile,
+  // dbInfo for user, jam sessions, spotify playlists
+  const [isAuthenticated, setAuthenticationStatus] = useState(false);
+  const [spotifyProfile, setSpotifyProfile] = useState({});
+  const [dbInfo, setDbInfo] = useState({})
+  const [jamSessions, setJamSessions] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+
+  const createJamSession = (props) => {
+    const newJamSessions = props.jamSessions;
+    const newPlaylists = props.playlists;
+    const playlistName = document.getElementById('session-name').value;
+    document.getElementById('session-name').value = '';
+    const isPublic = document.querySelector('input[name="public"]:checked').value;
+    if (!playlistName) return;
+    fetch('/jamSession/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playlistName: playlistName,
+        isPublic: isPublic,
+        id: props.spotifyId,
+      }),
+    })
+      .then(data => data.json())
+      .then(data => {
+        // update jamSessions part of state with new session
+        // update playlists part of state with new playlist
+        newJamSessions.push(data.jamSession);
+        newPlaylists.push(data.playlist)
+        setJamSessions(newJamSessions);
+        setPlaylists(newPlaylists);
+      });
+  }
+  
+  useEffect ( () => {
+    fetch('http://localhost:8080/user/info')
+    .then(res => res.json())
+    .then(data => {      
+      setSpotifyProfile(data.spotifyProfile)
+      setAuthenticationStatus(data.authenticated);
+      setJamSessions(data.jamSessions);
+      setDbInfo(data.dbInfo);
+      setPlaylists(data.playlists);
+    })
+    .catch((error) => {console.error('Error:', error);})
+  },[])
+  
+  if (!isAuthenticated) {
+    console.log('authentication passed')
+    return (
+      <div id="login-page">
+          <Navbar isAuthenticated={isAuthenticated}/>
+          <LoginContainer />
+      </div>
+    )
+  } else {
+    return(
+      <div id="home-page">
+        <Navbar spotifyProfile={spotifyProfile} isAuthenticated={isAuthenticated}/>
+        <HomeContainer jamSessions={jamSessions} playlists={playlists} spotifyId={dbInfo.spotifyId} createJamSession={createJamSession}/>
+      </div>
+    );
+  }
+}
+
+export default MainContainer;
+
+ // let [userObj, setUserObj] = useState(
+  //   {
+  //     authenticated:false,
+  //     spotifyProfile:{},
+  //     dbInfo:{},
+  //     jamSessions:[],
+  //     playlists:[],
+  //   }); 
   
  /* userObj= {
     "authenticated":true,
@@ -31,37 +100,3 @@ function MainContainer() {
     "jamSessions":[],
     "playlists":[]
   }*/
-  const createJamSession =(jamSession) => {
-    jamSessions = [...userObj.jamSessions];
-    jamSessions.push(jamSession);
-    //back end call
-  }
-  
-  useEffect ( () => {
-    fetch('http://localhost:8080/user/info')
-    .then(res => res.json())
-    .then(data => {
-      setAuthenticationStatus(data.authenticated);
-      setUserObj(data);
-    })
-    .catch((error) => {console.error('Error:', error);})
-  },[])
-  
-  if (!isAuthenticated) {
-    return (
-      <div id="login-page">
-          <Navbar isAuthenticated={isAuthenticated} />
-          <LoginContainer />
-      </div>
-    )
-  }else{
-    return(
-      <div id="home-page">
-        <Navbar isAuthenticated={isAuthenticated}/>
-        <HomeContainer userObj = {userObj} createJamSession={createJamSession}/>
-      </div>
-    );
-  }
-}
-
-export default MainContainer;
