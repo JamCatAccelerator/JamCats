@@ -66,6 +66,20 @@ jamSessionController.createJamSession = async (req, res, next) => {
   );
 };
 
+jamSessionController.deleteJamSession = async (req, res, next) => {
+  const { playlistId } = req.query;
+  JamSession.deleteOne({ playlistId: playlistId}, (err, session) => {
+    if (err) {
+      return next({
+        log: 'Error in jamSessionController.deleteJamSession',
+        status: 400,
+        message: { err: 'An error occurred while trying to delete a jam session' },
+      });
+    }
+    return next();
+  })
+}
+
 jamSessionController.addSong = async (req, res, next) => {
   const { playlist_id, uri } = req.body;
   const authOptions = {

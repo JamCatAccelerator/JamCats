@@ -7,7 +7,7 @@ class JamSessionContainer extends Component {
         for (let i = 0; i < this.props.jamSessions.length; i++) {
             for (let j = 0; j < this.props.playlists.length; j++) {
                 if (this.props.playlists[j].id === this.props.jamSessions[i].playlistId) {
-                    jSessions.push(<JamSession key={`JamSession${i}`} id={i} playlist={this.props.playlists[j]} activateJamSession={this.props.activateJamSession} jamSession={this.props.jamSessions[i]}/>)
+                    jSessions.push(<JamSession key={`JamSession${i}`} id={i} playlist={this.props.playlists[j]} activateJamSession={this.props.activateJamSession} jamSession={this.props.jamSessions[i]} activated={false}/>)
                 }
             }
         }

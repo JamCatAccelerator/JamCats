@@ -13,6 +13,15 @@ jamSessionRouter.post(
   }
 );
 
+// delete req to delete current jam session
+jamSessionRouter.delete(
+  '/delete/:playlistId',
+  jamSessionController.deleteJamSession,
+  (req, res) => {
+    res.status(204);
+  }
+);
+
 // add song to Spotify
 jamSessionRouter.post('/addSong', jamSessionController.addSong, (req, res) => {
   res.status(200).json(res.locals);

@@ -59,7 +59,7 @@ function HomeContainer(props) {
             CURRENT JAM SESSSION
           </div>
         </header>
-        <ActiveJamSessionContainer currentJamSession = {currentJamSession} deactivateJamSession = {deactivateJamSession}/>
+        <ActiveJamSessionContainer jamSessions={props.jamSessions} playlists={props.playlists} deactivateJamSession = {deactivateJamSession} currentJamSession={currentJamSession}/>
       </div>
     )
  }
