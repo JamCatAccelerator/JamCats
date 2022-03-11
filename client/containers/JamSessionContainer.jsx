@@ -1,26 +1,6 @@
 import React, { useState, useEffect, Component } from 'react'
 import JamSession from '../components/JamSession';
 
-// const JamSessionContainer2 = (props) => {
-//     // console.log('Jam Sessions Container:', props.jamSessions);
-//     const jSessions = [];
-//     useEffect( () => {
-//         for (let i = 0; i < props.jamSessions.length; i++){
-//             jSessions.push(<JamSession id={i} activateJamSession={props.activateJamSession} jamSession={props.jamSessions[i]}/>)
-//         }
-//         // console.log('jSessions array after insertion');
-//         // console.log(jSessions)
-//     })
-//     // console.log('jSessions array after useEffect');
-//     // console.log(jSessions);
-//     return (
-//         <div id="jam-sessions">
-//             <p>hi</p>
-//             {jSessions}
-//         </div>
-//     )
-// }
-
 class JamSessionContainer extends Component {
     render() {
         const jSessions = [];

@@ -10,9 +10,12 @@ body {
     width: 100vW;
 }
 
-.box {
+.card, .box {
     background-color: $grey;
-    color: $white-ter
+    color: $white-ter;
+    border-radius: 1rem;
+    margin: 1rem;
+    padding: .5rem;
 }
 
 
