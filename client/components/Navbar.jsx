@@ -1,7 +1,6 @@
 import React from 'react'
 
 function Navbar(props) {
-  console.log('props.isAuthenticated: ', props)
   if (!props.isAuthenticated){
     return (
       <nav className='navbar'>
@@ -21,14 +20,18 @@ function Navbar(props) {
         </div>
      </nav>
     )
-  }else{
+  } else {
+    // if logged in, display spotify user's profile info in navbar using props.spotifyProfile
     return(
       <nav className='navbar'>
-      <div className='navbar-brand'>
-        <div className='navbar-item'>
-          <h1>JAM CATS</h1>
+        <div className='navbar-brand'>
+          <div className='navbar-item'>
+            <h1>JAM CATS</h1>
+          </div>
+          <div className='navbar-item'>
+            <img id="profile-picture" src={props.spotifyProfile.images[0].url} alt="Spotify profile picture"/>
+          </div>
         </div>
-      </div>
       </nav>
     );  
   }

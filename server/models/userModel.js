@@ -18,10 +18,6 @@ mongoose.set('debug', true);
 const userSchema = new Schema({
   spotifyId: { type: String, required: true, unique: true },
   hostToken: { type: String, required: true },
-  jamSessions: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'JamSession' }],
-    default: [],
-  },
 });
 
 module.exports = mongoose.model('User', userSchema);

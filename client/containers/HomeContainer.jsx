@@ -44,8 +44,10 @@ function HomeContainer(props) {
             JAM SESSION DASHBOARD          
           </div>
         </header>
-        <CreateJamSession jamSessions={props.userObj.jamSessions}/>
-        <JamSessionContainer jamSessions = {props.userObj.jamSessions} activateJamSession = {activateJamSession} />
+        <CreateJamSession jamSessions={props.jamSessions} playlists={props.playlists} spotifyId={props.spotifyId} createJamSession={props.createJamSession}  />
+        <br></br>
+        <br></br>
+        <JamSessionContainer jamSessions={props.jamSessions} playlists={props.playlists} activateJamSession={activateJamSession} />
       </div>
     )
   }
@@ -57,7 +59,7 @@ function HomeContainer(props) {
             CURRENT JAM SESSSION
           </div>
         </header>
-        <ActiveJamSessionContainer currentJamSession = {currentJamSession} deactivateJamSession = {deactivateJamSession}/>
+        <ActiveJamSessionContainer jamSessions={props.jamSessions} playlists={props.playlists} deactivateJamSession = {deactivateJamSession} currentJamSession={currentJamSession}/>
       </div>
     )
  }
